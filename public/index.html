@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SheetFusion — Spreadsheet merging tool</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="background-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+  </div>
+
+  <div class="wrap">
+
+    <header class="masthead">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="4" width="40" height="40" rx="8" fill="url(#logo-gradient)" />
+            <path d="M14 16H34M14 24H28M14 32H22" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="logo-gradient" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#6366f1" />
+                <stop offset="1" stop-color="#8b5cf6" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div>
+          <p class="eyebrow">Spreadsheet merging</p>
+          <h1>SheetFusion</h1>
+        </div>
+      </div>
+      <p class="tagline">Upload any number of spreadsheets, automatically match records based on common column names, and get back one merged file.</p>
+      <div class="privacy-badge">
+        <span class="dot"></span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+        Files are parsed in server memory only and never written to disk. Nothing is stored after you get your results.
+      </div>
+    </header>
+
+    <section class="step" id="step-upload">
+      <p class="step-label">01 — Upload</p>
+      <h2 class="step-title">Add your files</h2>
+      <p class="step-desc">.xlsx or .csv. Add as many as you need — the first sheet of each file is used. (Legacy .xls isn't supported — re-save as .xlsx in Excel first.)</p>
+
+      <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Upload spreadsheets">
+        <input type="file" id="fileInput" multiple accept=".xlsx,.csv" hidden />
+        <div class="dropzone-content">
+          <div class="upload-icon">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <p class="main-text">Drag files here, or click to browse</p>
+          <p class="hint">XLSX · CSV</p>
+        </div>
+      </div>
+
+      <div class="file-cards" id="fileCards"></div>
+      <div class="msg-area" id="uploadMsg"></div>
+      <button class="secondary-btn" id="addMoreFilesBtn" type="button" style="display:none; margin-top: 16px;">+ Add more files</button>
+    </section>
+
+    <section class="step" id="step-process" style="display:none;">
+      <p class="step-label">02 — Merge</p>
+      <h2 class="step-title">Merge your files</h2>
+      <p class="step-desc">This sends your files to the server, automatically matches records based on common column names, and returns the merged file. Nothing is kept afterward.</p>
+      
+      <div class="filename-input">
+        <label for="outputFilename">Output filename:</label>
+        <input type="text" id="outputFilename" value="merged-data" placeholder="merged-data" />
+        <span>.xlsx</span>
+      </div>
+      
+      <button class="primary-btn" id="processBtn" type="button">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+        Merge files
+      </button>
+      <div class="msg-area" id="processMsg"></div>
+    </section>
+
+    <section class="step" id="step-results" style="display:none;">
+      <p class="step-label">03 — Results</p>
+      <h2 class="step-title">Download</h2>
+
+      <div class="stats" id="stats"></div>
+
+      <div class="downloads">
+        <button class="dl-btn primary" id="downloadMerged" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download merged data (.xlsx)
+        </button>
+        <button class="dl-btn warn" id="downloadMismatches" type="button">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Download mismatches (.xlsx)
+        </button>
+      </div>
+    </section>
+
+    <footer>
+      <p class="privacy-note">Refresh this page and every file and result is gone — nothing persists on the server between requests.</p>
+      <button class="clear-btn" id="clearAllBtn" type="button">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 6h18"/>
+          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/>
+          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
+        </svg>
+        Clear everything
+      </button>
+    </footer>
+
+  </div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

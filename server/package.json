@@ -1,0 +1,18 @@
+{
+  "name": "sheetfusion-server",
+  "version": "1.1.0",
+  "description": "Backend for the SheetFusion spreadsheet merging tool. Parses uploaded Excel/CSV files and merges them in memory only — nothing is written to disk.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "multer": "^2.0.0",
+    "exceljs": "^4.4.0"
+  },
+  "overrides": {
+    "uuid": "^11.1.1"
+  }
+}
