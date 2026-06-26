@@ -220,9 +220,7 @@ docker run -p 3000:3000 sheetfusion
 
 ```bash
 # Find the process using port 3000
-netstat -ano | findstr :3000  # Windows
-lsof -i :3000                 # macOS/Linux
-
+netstat -ano | findstr :3000  
 # Kill the process or use a different port
 PORT=4000 npm start
 ```
